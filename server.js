@@ -68,6 +68,86 @@ app.use("/api", allRoutes);
 // });
 
 
+// Supplier API *********************************************************************
+app.get("/api/supplier-products", async (req, res) => {
+
+  const AUTH_TOKEN = "NDVhOWFkYWVkZWJmYTU0Njo3OWQ4MzJlODdmMjM4ZTJhMDZlNDY3MmVlZDIwYzczYQ";
+  const headers = {
+    "x-auth-token": AUTH_TOKEN,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await axios.get(`https://api.promodata.com.au/suppliers`, {
+      headers,
+    });
+    
+    
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/ignore-supplier", async (req, res) => {
+  const { supplierId } = req.body;
+
+  try {
+    const response = await axios.post(
+      "https://api.promodata.com.au/suppliers/ignore",
+      { supplier_ids: [supplierId] },
+      { 
+        headers: {
+          "x-auth-token":
+            "NDVhOWFkYWVkZWJmYTU0Njo3OWQ4MzJlODdmMjM4ZTJhMDZlNDY3MmVlZDIwYzczYQ",
+        },
+      }
+    );
+    res.json(response.data.description);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/ignored-suppliers", async (req, res) => {
+  const AUTH_TOKEN = "NDVhOWFkYWVkZWJmYTU0Njo3OWQ4MzJlODdmMjM4ZTJhMDZlNDY3MmVlZDIwYzczYQ";
+  const headers = {
+    "x-auth-token": AUTH_TOKEN,
+    "Content-Type": "application/json",
+  };
+  try {
+    const response = await axios.get(`https://api.promodata.com.au/suppliers/ignored`, {
+      headers,
+    });
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/unignore-supplier", async (req, res) => {
+  const { supplierId } = req.body;
+  try {
+    const response = await axios.post(
+      "https://api.promodata.com.au/suppliers/unignore",
+      { supplier_ids: [supplierId] },
+      {
+        headers: {
+          "x-auth-token":
+            "NDVhOWFkYWVkZWJmYTU0Njo3OWQ4MzJlODdmMjM4ZTJhMDZlNDY3MmVlZDIwYzczYQ",
+        },
+      }
+    );
+    res.json(response.data.description);
+  } catch (error) {
+    console.error("Error unignoring product:", error);
+    res.status(500).json({ error: "Failed to unignore product" });
+  }
+});
+
+
+
+
 
 app.get("/api/client-products", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -123,7 +203,7 @@ app.post("/api/ignore-product", async (req, res) => {
     const response = await axios.post(
       "https://api.promodata.com.au/products/ignore",
       { product_ids: [productId] },
-      {
+      { 
         headers: {
           "x-auth-token":
             "NDVhOWFkYWVkZWJmYTU0Njo3OWQ4MzJlODdmMjM4ZTJhMDZlNDY3MmVlZDIwYzczYQ",
